@@ -30,7 +30,7 @@ export const fetchAsyncRegister = createAsyncThunk(
   }
 );
 
-export const fetchAsynCreateProf = createAsyncThunk(
+export const fetchAsyncCreateProf = createAsyncThunk(
   "profile/post",
   async (nickName: PROPS_NICKNAME) => {
     const res = await axios.post(`${apiUrl}api/profile/`, nickName, {
@@ -47,10 +47,10 @@ export const fetchAsyncUpdateProf = createAsyncThunk(
   "profile/put",
   async (profile: PROPS_PROFILE) => {
     const uploadData = new FormData();
-    uploadData.append("nockName", profile.nickName);
-    profile.img && uploadData.append("img", profile.img.name);
+    uploadData.append("nickName", profile.nickName);
+    profile.img && uploadData.append("img", profile.img, profile.img.name);
     const res = await axios.put(
-      `${apiUrl}api/profile/${profile.id}`,
+      `${apiUrl}api/profile/${profile.id}/`,
       uploadData,
       {
         headers: {
@@ -73,9 +73,9 @@ export const fetchAsyncGetMyProf = createAsyncThunk("profile/get", async () => {
 });
 
 export const fetchAsyncGetProfs = createAsyncThunk("profiles/get", async () => {
-  const res = await axios.get(`$apiUrl/api/profile/`, {
+  const res = await axios.get(`${apiUrl}api/profile/`, {
     headers: {
-      Authorization : `JWT ${localStorage.localJWT}`,
+      Authorization: `JWT ${localStorage.localJWT}`,
     },
   });
   return res.data
@@ -127,7 +127,7 @@ export const authSlice = createSlice({
     setOpenProfile(state) {
       state.openProfile = true;
     },
-    resetOpneProfile(state) {
+    resetOpenProfile(state) {
       state.openProfile = false;
     },
     editNickName(state, action) {
@@ -139,7 +139,7 @@ export const authSlice = createSlice({
     builder.addCase(fetchAsyncLogin.fulfilled, (state, action) => {
       localStorage.setItem("localJWT", action.payload.access);
     });
-    builder.addCase(fetchAsynCreateProf.fulfilled, (state, action) => {
+    builder.addCase(fetchAsyncCreateProf.fulfilled, (state, action) => {
       state.myprofile = action.payload;
     });
     builder.addCase(fetchAsyncGetMyProf.fulfilled, (state, action) => {
@@ -149,7 +149,7 @@ export const authSlice = createSlice({
       state.profiles = action.payload;
     });
     builder.addCase(fetchAsyncUpdateProf.fulfilled, (state, action) => {
-      state.profiles = action.payload;
+      state.myprofile = action.payload;
       state.profiles = state.profiles.map((prof) => 
         prof.id === action.payload.id ? action.payload : prof
       );
@@ -166,8 +166,8 @@ export const {
   setOpenSignUp,
   resetOpenSignUp,
   setOpenProfile, 
-  resetOpneProfile, 
-  editNickName
+  resetOpenProfile, 
+  editNickName,
 } = authSlice.actions;
 
 export const selectIsLoadingAuth = (state: RootState) => state.auth.isLoadingAuth;
