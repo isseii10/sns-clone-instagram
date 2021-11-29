@@ -9,7 +9,7 @@ def upload_avatar_path(instance, filename):
 
 def upload_post_path(instance, filename):
     ext = filename.split('.')[-1]
-    return '/'.join(['avatars', str(instance.userPost.id)+str(instance.title)+str('.')+str(ext)])
+    return '/'.join(['posts', str(instance.userPost.id)+str(instance.title)+str('.')+str(ext)])
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None):
@@ -19,7 +19,6 @@ class UserManager(BaseUserManager):
         user = self.model(email=self.normalize_email(email))
         user.set_password(password)
         user.save(using=self._db)
-
         return user
     
     def create_superuser(self, email, password):
@@ -27,7 +26,6 @@ class UserManager(BaseUserManager):
         user.is_staff = True
         user.is_superuser = True
         user.save(using=self._db)
-        
         return user
 
 class User(AbstractBaseUser, PermissionsMixin):

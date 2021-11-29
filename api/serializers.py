@@ -24,14 +24,14 @@ class ProfileSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     created_on = serializers.DateTimeField(format='%Y-%m-%d', read_only=True)
 
-    class Mera:
+    class Meta:
         model = Post
         fields = ('id', 'title', 'userPost', 'created_on', 'img', 'liked')
-        extra_kwargs = {'userPost', {'read_only': True}}
+        extra_kwargs = {'userPost': {'read_only': True}}
 
 class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model=Comment
         fields = ('id', 'text', 'userComment', 'post')
-        extra_kwargs = {'userComment':{'read_only': True}}
+        extra_kwargs = {'userComment': {'read_only': True}}
