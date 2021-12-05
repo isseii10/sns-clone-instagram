@@ -6,7 +6,7 @@ import  Modal from 'react-modal';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { TextField, Button, CircularProgress } from '@material-ui/core';
-
+import { fetchAsyncGetPosts, fetchAsyncGetComments } from '../post/postSlice';
 /*非同期処理の関数群 */
 import {
   selectIsLoadingAuth,
@@ -69,8 +69,8 @@ const Auth: React.FC = () => {
               await dispatch(fetchAsyncCreateProf({nickName: 'anonymous'}));
 
               await dispatch(fetchAsyncGetProfs());
-              //await dispatch(fetchAsyncGetPosts());
-              //await dispatch(fetchAsyncGetComments());
+              await dispatch(fetchAsyncGetPosts());
+              await dispatch(fetchAsyncGetComments());
               await dispatch(fetchAsyncGetMyProf());
             }
               
@@ -171,8 +171,8 @@ const Auth: React.FC = () => {
 
           if (fetchAsyncLogin.fulfilled.match(result)) {
             await dispatch(fetchAsyncGetProfs());
-            //await dispatch(fetchAsyncGetPosts());
-            //await dispatch(fetchAsyncGetComments());
+            await dispatch(fetchAsyncGetPosts());
+            await dispatch(fetchAsyncGetComments());
             await dispatch(fetchAsyncGetMyProf());
           }
               

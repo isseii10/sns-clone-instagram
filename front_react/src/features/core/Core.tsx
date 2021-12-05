@@ -14,7 +14,7 @@ import {
 import { MdAddAPhoto } from 'react-icons/md';
 
 import {
-  editNickName,
+  editNickname,
   selectProfile,
   selectIsLoadingAuth,
   setOpenSignIn,
@@ -33,9 +33,11 @@ import {
   setOpenNewPost,
   resetOpenNewPost,
   fetchAsyncGetPosts,
-  fetchAsyncGetCommnets,
+  fetchAsyncGetComments,
 } from '../post/postSlice';
-import { displayPartsToString } from 'typescript';
+
+import Post from '../post/Post'
+import EditProfile from './EditProfile';
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -86,7 +88,7 @@ const Core: React.FC = () => {
         }
         await dispatch(fetchAsyncGetPosts());
         await dispatch(fetchAsyncGetProfs());
-        await dispatch(fetchAsyncGetCommnets());
+        await dispatch(fetchAsyncGetComments());
       }
     };
     fetchBootLoader();
@@ -95,6 +97,7 @@ const Core: React.FC = () => {
   return (
     <div>
       <Auth />
+      <EditProfile />
       <div className={styles.core_header}>
         <h1 className={styles.core_title}>SNS clone</h1>
         {/*loginしているかどうかをprofileやnickNameの有無で判別 */
@@ -110,10 +113,11 @@ const Core: React.FC = () => {
               <MdAddAPhoto />
             </button>
             <div className={styles.core_logout}>
+              {(isLoadingPost || isLoadingAuth) && <CircularProgress />}
               <Button
                 onClick={() => {
                   localStorage.removeItem('localJWT');
-                  dispatch(editNickName(''));
+                  dispatch(editNickname(''));
                   dispatch(resetOpenProfile());
                   dispatch(resetOpenNewPost());
                   dispatch(setOpenSignIn());
@@ -121,14 +125,73 @@ const Core: React.FC = () => {
               >
                 Logout
               </Button>
+              <button
+                className={styles.core_btnModal}
+                onClick={() => {
+                  dispatch(setOpenProfile());
+                  dispatch(resetOpenNewPost());
+                }}
+              >
+                <StyledBadge
+                  overlap="circle"
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  variant="dot"
+                >
+                  <Avatar alt="who?" src={profile.img} />{" "}
+                </StyledBadge>
+              </button>
             </div>
           </>
         ):(
           <div>
-            
+            <Button
+              onClick={() => {
+                dispatch(setOpenSignIn());
+                dispatch(resetOpenSignUp());
+              }} 
+            >
+              LogIn
+            </Button>
+            <Button
+              onClick={() => {
+                dispatch(setOpenSignUp());
+                dispatch(resetOpenSignIn());
+              }}
+            >
+              SignUp
+            </Button>
           </div>
         )}
       </div>
+      {profile?.nickName && 
+      <>
+        <div className={styles.core_posts}>
+          <Grid container spacing={4}>
+            {posts
+              .slice(0)
+              .reverse()
+              .map((post) => (
+                <Grid key={post.id} item xs={12} md={4}>
+                  <Post
+                    postId={post.id}
+                    title={post.title}
+                    loginId={profile.userProfile}
+                    userPost={post.userPost}
+                    imageUrl={post.img}
+                    liked={post.liked}
+                  />
+                </Grid>
+              ))
+            }
+          </Grid>
+        </div>
+      </>}
+
+
+      
     </div>
   )
 }

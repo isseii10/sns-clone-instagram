@@ -69,7 +69,7 @@ export const fetchAsyncPatchLiked = createAsyncThunk(
   }
 );
 
-export const fetchAsyncGetCommnets = createAsyncThunk(
+export const fetchAsyncGetComments = createAsyncThunk(
   'comment/get',
   async () => {
     const res = await axios.get(apiUrlComment, {
@@ -144,7 +144,7 @@ export const postSlice = createSlice({
         posts: [...state.posts, action.payload],
       };
     });
-    builder.addCase(fetchAsyncGetCommnets.fulfilled, (state, action) => {
+    builder.addCase(fetchAsyncGetComments.fulfilled, (state, action) => {
       return {
         ...state,
         comments: action.payload,

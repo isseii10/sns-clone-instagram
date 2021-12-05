@@ -78,7 +78,7 @@ export const fetchAsyncGetProfs = createAsyncThunk("profiles/get", async () => {
       Authorization: `JWT ${localStorage.localJWT}`,
     },
   });
-  return res.data
+  return res.data;
 });
 
 export const authSlice = createSlice({
@@ -130,7 +130,7 @@ export const authSlice = createSlice({
     resetOpenProfile(state) {
       state.openProfile = false;
     },
-    editNickName(state, action) {
+    editNickname(state, action) {
       state.myprofile.nickName = action.payload;
     },
   },
@@ -167,7 +167,7 @@ export const {
   resetOpenSignUp,
   setOpenProfile, 
   resetOpenProfile, 
-  editNickName,
+  editNickname,
 } = authSlice.actions;
 
 export const selectIsLoadingAuth = (state: RootState) => state.auth.isLoadingAuth;
