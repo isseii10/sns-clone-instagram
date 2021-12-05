@@ -1,30 +1,29 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { RootState } from '../../app/store';
-import { PROPS_NEWPOST, PROPS_LIKED, PROPS_COMMENT } from '../types';
-
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { RootState } from "../../app/store";
+import axios from "axios";
+import { PROPS_NEWPOST, PROPS_LIKED, PROPS_COMMENT } from "../types";
 
 const apiUrlPost = `${process.env.REACT_APP_DEV_API_URL}api/post/`;
 const apiUrlComment = `${process.env.REACT_APP_DEV_API_URL}api/comment/`;
 
-export const fetchAsyncGetPosts = createAsyncThunk('post/get', async () => {
+export const fetchAsyncGetPosts = createAsyncThunk("post/get", async () => {
   const res = await axios.get(apiUrlPost, {
     headers: {
       Authorization: `JWT ${localStorage.localJWT}`,
-    }
-  })
+    },
+  });
   return res.data;
 });
 
 export const fetchAsyncNewPost = createAsyncThunk(
-  'post/post',
+  "post/post",
   async (newPost: PROPS_NEWPOST) => {
     const uploadData = new FormData();
-    uploadData.append('title', newPost.title);
-    newPost.img && uploadData.append('img', newPost.img, newPost.img.name);
+    uploadData.append("title", newPost.title);
+    newPost.img && uploadData.append("img", newPost.img, newPost.img.name);
     const res = await axios.post(apiUrlPost, uploadData, {
       headers: {
-        'Context-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: `JWT ${localStorage.localJWT}`,
       },
     });
@@ -33,7 +32,7 @@ export const fetchAsyncNewPost = createAsyncThunk(
 );
 
 export const fetchAsyncPatchLiked = createAsyncThunk(
-  'post/patch',
+  "post/patch",
   async (liked: PROPS_LIKED) => {
     const currentLiked = liked.current;
     const uploadData = new FormData();
@@ -43,17 +42,17 @@ export const fetchAsyncPatchLiked = createAsyncThunk(
       if (current === liked.new) {
         isOverlapped = true;
       } else {
-        uploadData.append('liked', String(current));
+        uploadData.append("liked", String(current));
       }
     });
 
     if (!isOverlapped) {
-      uploadData.append('liked', String(liked.new));
+      uploadData.append("liked", String(liked.new));
     } else if (currentLiked.length === 1) {
-      uploadData.append('title', liked.title);
+      uploadData.append("title", liked.title);
       const res = await axios.put(`${apiUrlPost}${liked.id}/`, uploadData, {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `JWT ${localStorage.localJWT}`,
         },
       });
@@ -61,7 +60,7 @@ export const fetchAsyncPatchLiked = createAsyncThunk(
     }
     const res = await axios.patch(`${apiUrlPost}${liked.id}/`, uploadData, {
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
         Authorization: `JWT ${localStorage.localJWT}`,
       },
     });
@@ -70,7 +69,7 @@ export const fetchAsyncPatchLiked = createAsyncThunk(
 );
 
 export const fetchAsyncGetComments = createAsyncThunk(
-  'comment/get',
+  "comment/get",
   async () => {
     const res = await axios.get(apiUrlComment, {
       headers: {
@@ -82,40 +81,40 @@ export const fetchAsyncGetComments = createAsyncThunk(
 );
 
 export const fetchAsyncPostComment = createAsyncThunk(
-  'comment/post',
+  "comment/post",
   async (comment: PROPS_COMMENT) => {
     const res = await axios.post(apiUrlComment, comment, {
       headers: {
         Authorization: `JWT ${localStorage.localJWT}`,
-      }
+      },
     });
     return res.data;
   }
 );
 
 export const postSlice = createSlice({
-  name: 'post',
+  name: "post",
   initialState: {
     isLoadingPost: false,
     openNewPost: false,
     posts: [
       {
         id: 0,
-        title: '',
+        title: "",
         userPost: 0,
-        created_on: '',
-        img: '',
+        created_on: "",
+        img: "",
         liked: [0],
       },
     ],
     comments: [
       {
         id: 0,
-        text: '',
+        text: "",
         userComment: 0,
         post: 0,
       },
-    ],  
+    ],
   },
   reducers: {
     fetchPostStart(state) {
@@ -129,7 +128,7 @@ export const postSlice = createSlice({
     },
     resetOpenNewPost(state) {
       state.openNewPost = false;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchAsyncGetPosts.fulfilled, (state, action) => {
@@ -158,24 +157,24 @@ export const postSlice = createSlice({
     });
     builder.addCase(fetchAsyncPatchLiked.fulfilled, (state, action) => {
       return {
-        ...state, 
+        ...state,
         posts: state.posts.map((post) =>
           post.id === action.payload.id ? action.payload : post
         ),
       };
     });
   },
-  
 });
 
-export const { 
+export const {
   fetchPostStart,
   fetchPostEnd,
   setOpenNewPost,
   resetOpenNewPost,
 } = postSlice.actions;
 
-export const selectIsLoadingPost = (state: RootState) => state.post.isLoadingPost;
+export const selectIsLoadingPost = (state: RootState) =>
+  state.post.isLoadingPost;
 export const selectOpenNewPost = (state: RootState) => state.post.openNewPost;
 export const selectPosts = (state: RootState) => state.post.posts;
 export const selectComments = (state: RootState) => state.post.comments;

@@ -1,15 +1,14 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { RootState } from '../../app/store';
-import { PROPS_AUTHEN, PROPS_PROFILE, PROPS_NICKNAME } from '../types';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { RootState } from "../../app/store";
+import axios from "axios";
+import { PROPS_AUTHEN, PROPS_PROFILE, PROPS_NICKNAME } from "../types";
 
-
-const apiUrl = process.env.REACT_APP_DEV_API_URL
+const apiUrl = process.env.REACT_APP_DEV_API_URL;
 
 export const fetchAsyncLogin = createAsyncThunk(
   "auth/post",
   async (authen: PROPS_AUTHEN) => {
-    const res = await axios.post(`${apiUrl}authen/jwt/create/`, authen, {
+    const res = await axios.post(`${apiUrl}authen/jwt/create`, authen, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -82,7 +81,7 @@ export const fetchAsyncGetProfs = createAsyncThunk("profiles/get", async () => {
 });
 
 export const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState: {
     openSignIn: true,
     openSignUp: false,
@@ -90,18 +89,18 @@ export const authSlice = createSlice({
     isLoadingAuth: false,
     myprofile: {
       id: 0,
-      nickName: '',
+      nickName: "",
       userProfile: 0,
-      created_on: '',
-      img: '',
+      created_on: "",
+      img: "",
     },
     profiles: [
       {
         id: 0,
-        nickName: '',
+        nickName: "",
         userProfile: 0,
-        created_on: '',
-        img: '',
+        created_on: "",
+        img: "",
       },
     ],
   },
@@ -134,7 +133,6 @@ export const authSlice = createSlice({
       state.myprofile.nickName = action.payload;
     },
   },
-  
   extraReducers: (builder) => {
     builder.addCase(fetchAsyncLogin.fulfilled, (state, action) => {
       localStorage.setItem("localJWT", action.payload.access);
@@ -150,27 +148,27 @@ export const authSlice = createSlice({
     });
     builder.addCase(fetchAsyncUpdateProf.fulfilled, (state, action) => {
       state.myprofile = action.payload;
-      state.profiles = state.profiles.map((prof) => 
+      state.profiles = state.profiles.map((prof) =>
         prof.id === action.payload.id ? action.payload : prof
       );
     });
   },
-  
 });
 
-export const { 
-  fetchCredStart, 
+export const {
+  fetchCredStart,
   fetchCredEnd,
   setOpenSignIn,
   resetOpenSignIn,
   setOpenSignUp,
   resetOpenSignUp,
-  setOpenProfile, 
-  resetOpenProfile, 
+  setOpenProfile,
+  resetOpenProfile,
   editNickname,
 } = authSlice.actions;
 
-export const selectIsLoadingAuth = (state: RootState) => state.auth.isLoadingAuth;
+export const selectIsLoadingAuth = (state: RootState) =>
+  state.auth.isLoadingAuth;
 export const selectOpenSignIn = (state: RootState) => state.auth.openSignIn;
 export const selectOpenSignUp = (state: RootState) => state.auth.openSignUp;
 export const selectOpenProfile = (state: RootState) => state.auth.openProfile;

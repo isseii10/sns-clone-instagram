@@ -1,33 +1,33 @@
-import React, { useState } from 'react'
-import Modal from 'react-modal'
-import { useSelector, useDispatch } from 'react-redux'
-import { AppDispatch } from '../../app/store'
+import React, { useState } from "react";
+import Modal from "react-modal";
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch } from "../../app/store";
 
-import styles from './Core.module.css'
+import styles from "./Core.module.css";
 
-import { File } from '../types'
+import { File } from "../types";
 
 import {
   selectOpenNewPost,
   resetOpenNewPost,
   fetchPostStart,
   fetchPostEnd,
-  fetchAsyncNewPost
-} from '../post/postSlice'
+  fetchAsyncNewPost,
+} from "../post/postSlice";
 
-import { Button, TextField, IconButton } from '@material-ui/core'
-import { MdAddAPhoto } from 'react-icons/md'
+import { Button, TextField, IconButton } from "@material-ui/core";
+import { MdAddAPhoto } from "react-icons/md";
 
-const customStyles ={
+const customStyles = {
   content: {
-    top: '55%',
-    left: '50%',
+    top: "55%",
+    left: "50%",
 
     width: 280,
     height: 220,
-    padding: '50px',
+    padding: "50px",
 
-    transform: "transform(-50%, -50%)",
+    transform: "translate(-50%, -50%)",
   },
 };
 
@@ -36,24 +36,23 @@ const NewPost: React.FC = () => {
   const openNewPost = useSelector(selectOpenNewPost);
 
   const [image, setImage] = useState<File | null>(null);
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState("");
 
   const handlerEditPicture = () => {
-    const fileInput = document.getElementById('imageInput');
+    const fileInput = document.getElementById("imageInput");
     fileInput?.click();
   };
-  
+
   const newPost = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    const packet = { title: title, img: image};
+    const packet = { title: title, img: image };
     await dispatch(fetchPostStart());
     await dispatch(fetchAsyncNewPost(packet));
     await dispatch(fetchPostEnd());
-    setTitle('');
+    setTitle("");
     setImage(null);
     dispatch(resetOpenNewPost());
   };
-
 
   return (
     <>
@@ -66,15 +65,17 @@ const NewPost: React.FC = () => {
       >
         <form className={styles.core_signUp}>
           <h1 className={styles.core_title}>SNS clone</h1>
+
           <br />
-          <TextField 
-            placeholder='Please enter caption'
-            type='text'
+          <TextField
+            placeholder="Please enter caption"
+            type="text"
             onChange={(e) => setTitle(e.target.value)}
           />
-          <input 
-            type='file'
-            id='imageInput'
+
+          <input
+            type="file"
+            id="imageInput"
             hidden={true}
             onChange={(e) => setImage(e.target.files![0])}
           />
@@ -85,17 +86,16 @@ const NewPost: React.FC = () => {
           <br />
           <Button
             disabled={!title || !image}
-            variant='contained'
-            color='primary'
+            variant="contained"
+            color="primary"
             onClick={newPost}
           >
             New post
           </Button>
         </form>
-        
       </Modal>
     </>
-  )
-}
+  );
+};
 
-export default NewPost
+export default NewPost;
